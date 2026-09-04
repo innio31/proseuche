@@ -29,6 +29,15 @@ registerRoute('#/settings', renderSettings);
 
 async function boot() {
   await profile.init(); // local identity always exists — no account required to start
+
+  // ── Theme support ──
+  const savedTheme = localStorage.getItem('proseuche_theme');
+  if (savedTheme && savedTheme !== 'system') {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  } else if (savedTheme === 'system') {
+    document.documentElement.removeAttribute('data-theme');
+  }
+
   startRouter();
   startReminderEngine();
 }
@@ -41,10 +50,14 @@ function showReminderBanner(label) {
     banner = document.createElement('div');
     banner.id = 'reminder-banner';
     banner.style.cssText =
-      'position:sticky;top:0;z-index:20;background:var(--accent);color:#201406;padding:12px 16px;font-weight:600;display:flex;justify-content:space-between;align-items:center;';
+      'position:sticky;top:0;z-index:20;background:var(--accent);color:#201406;padding:12px 16px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:12px;';
     document.getElementById('app').prepend(banner);
   }
-  banner.innerHTML = `<span>🕯️ ${label}</span><button style="background:none;border:none;color:#201406;font-weight:700;font-size:1.1rem" id="dismiss-reminder">×</button>`;
+  banner.innerHTML = `
+    <span class="reminder-icon">🕯️</span>
+    <span class="reminder-text">${label}</span>
+    <button style="background:none;border:none;color:#201406;font-weight:700;font-size:1.2rem;padding:4px 8px;cursor:pointer" id="dismiss-reminder">×</button>
+  `;
   banner.querySelector('#dismiss-reminder').addEventListener('click', () => banner.remove());
 }
 
@@ -56,24 +69,19 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-/* ── Install banner ───────────────────────────────────────────────────
-   Android/Chrome: shows once beforeinstallprompt has fired, lets the
-   person trigger it on their own terms via a real button.
-   iOS Safari: that event never fires, so we show manual instructions
-   instead — this is a platform limit, not something we can prompt around. */
-
+/* ── Install banner ── */
 const DISMISS_KEY = 'proseuche_install_banner_dismissed';
 
 function maybeShowInstallBanner() {
   if (isStandalone() || sessionStorage.getItem(DISMISS_KEY)) return;
 
   if (canPromptInstall()) {
-    showInstallBanner('Add Proseuche to your home screen for quick access.', async () => {
+    showInstallBanner('Add <strong>Proseuche</strong> to your home screen for quick access.', async () => {
       await promptInstall();
       removeInstallBanner();
     });
   } else if (isIOS()) {
-    showInstallBanner('Install Proseuche: tap the Share icon, then "Add to Home Screen".', null);
+    showInstallBanner('Install <strong>Proseuche</strong>: tap the Share icon, then "Add to Home Screen".', null);
   }
 }
 
@@ -81,13 +89,11 @@ function showInstallBanner(text, onInstallClick) {
   removeInstallBanner();
   const banner = document.createElement('div');
   banner.id = 'install-banner';
-  banner.style.cssText =
-    'position:sticky;top:0;z-index:20;background:var(--bg-raised-2);border-bottom:1px solid var(--line);color:var(--text);padding:10px 14px;font-size:.85rem;display:flex;justify-content:space-between;align-items:center;gap:10px;';
   banner.innerHTML = `
-    <span>${text}</span>
+    <span class="install-text">${text}</span>
     <span style="display:flex;gap:8px;flex-shrink:0">
-      ${onInstallClick ? '<button id="install-action" style="background:var(--accent);color:#201406;border:none;border-radius:6px;padding:6px 12px;font-weight:600">Install</button>' : ''}
-      <button id="install-dismiss" style="background:none;border:none;color:var(--text-faint);font-size:1.1rem">×</button>
+      ${onInstallClick ? '<button class="btn btn-primary btn-sm" id="install-action" style="width:auto;padding:6px 16px">Install</button>' : ''}
+      <button class="btn-ghost" id="install-dismiss" style="font-size:1.2rem;padding:4px 8px">×</button>
     </span>`;
   document.getElementById('app').prepend(banner);
   banner.querySelector('#install-action')?.addEventListener('click', onInstallClick);
