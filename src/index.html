@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Proseuche — Prayer Companion</title>
+  <meta name="description" content="A personal and collective prayer companion." />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#101820" />
+  <link rel="icon" href="/icons/favicon.png" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <main id="screen" class="screen"><div class="empty-state">Loading…</div></main>
+    <div id="bottom-nav-wrap">
+      <nav class="bottom-nav">
+        <a href="#/today"><span class="icon">◐</span>Today</a>
+        <a href="#/prayers"><span class="icon">✦</span>Prayers</a>
+        <a href="#/bible"><span class="icon">📖</span>Bible</a>
+        <a href="#/journal"><span class="icon">✎</span>Journal</a>
+        <a href="#/settings"><span class="icon">⚙</span>Settings</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Set this before app.js loads if you need to point at a different API
+       (e.g. a staging server) without rebuilding: window.PROSEUCHE_API_BASE = '...' -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
