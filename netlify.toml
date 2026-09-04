@@ -1,0 +1,14 @@
+[build]
+  publish = "src"
+  command = ""
+
+# The service worker file must never be cached long-term, or updates won't reach users.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "no-cache"
